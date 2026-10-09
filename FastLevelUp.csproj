@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>FastLevelUp</AssemblyName>
+    <RootNamespace>FastLevelUp</RootNamespace>
+    <LangVersion>9.0</LangVersion>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- 游戏自带 0Harmony，禁止 NuGet 再塞一份进来 -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup Label="路径">
+    <OniDir>D:\Steam\steamapps\common\OxygenNotIncluded</OniDir>
+    <OniManagedDir>$(OniDir)\OxygenNotIncluded_Data\Managed</OniManagedDir>
+    <OniLocalModsDir>$(UserProfile)\Documents\Klei\OxygenNotIncluded\mods\local</OniLocalModsDir>
+    <!-- 部署文件夹名 = 游戏里的 staticID，改名会导致旧存档提示缺少该模组 -->
+    <ModFolderName>FastLevelUp</ModFolderName>
+    <AutoDeployToOniMods>true</AutoDeployToOniMods>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!-- PLib 4.x：提供主界面「模组 - 选项」按钮与选项面板 -->
+    <PackageReference Include="PLib" Version="4.25.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 游戏程序集一律 Private=false，否则会被整包复制进 bin -->
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(OniManagedDir)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>$(OniManagedDir)\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(OniManagedDir)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(OniManagedDir)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(OniManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="mod.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="mod_info.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- 编译后自动部署到游戏本地模组目录 -->
+  <Target Name="DeployToOniMods" AfterTargets="Build"
+          Condition="'$(AutoDeployToOniMods)' == 'true' And Exists('$(OniLocalModsDir)')">
+    <PropertyGroup>
+      <ModDeployDir>$(OniLocalModsDir)\$(ModFolderName)</ModDeployDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(ModDeployDir)" />
+    <!-- bin 输出即部署内容：mod dll + PLib dll + 两个 yaml -->
+    <ItemGroup>
+      <ModDeployFiles Include="$(OutDir)*.*" />
+    </ItemGroup>
+    <!-- 游戏开着时 DLL 会被占用，容错继续而不中断构建 -->
+    <Copy SourceFiles="@(ModDeployFiles)" DestinationFolder="$(ModDeployDir)"
+          OverwriteReadOnlyFiles="true" ContinueOnError="WarnAndContinue" />
+    <Message Importance="high" Text="[FastLevelUp] 已部署 -&gt; $(ModDeployDir)" />
+  </Target>
+
+</Project>
