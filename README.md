@@ -96,6 +96,18 @@ Klei 原版公式形状完全一致，只是常量不同（原版：上限 20 / 
 - 倍率 20 + 上限 500 + 周期 5 时，单次需求被 `1f` 下限托住，配合溢出结转可以在短时间内连跳多级——这是设置意图内的结果，不是 bug
 - 手改 `config.json` 塞入 NaN / Infinity / 越界值会被 `Sanitize()` 夹回安全范围，不会污染经验公式
 
+## 发布打包
+
+```powershell
+.\tools\package.ps1 -Version 1.1.0
+```
+
+产出 `dist\FastLevelUp-v1.1.0.zip`，内含 `FastLevelUp.dll`、`PLib.dll`、`mod.yaml`、`mod_info.yaml` 四个文件，
+解压到 `mods\local\FastLevelUp\` 即可使用。
+
+CI 无法自动构建：本项目编译时必须引用游戏本体的 `Assembly-CSharp.dll` 等程序集，
+而这些文件不便于随仓库分发，也不在 GitHub Runner 上，因此 Release 由维护者本地打包后上传。
+
 ## 变更记录
 
 - **v1.1.0**：加入可调选项面板（原版依赖 PLib）；经验预算模式、曲线陡峭度放宽到 0.6–2.5、溢出经验结转、需求表预计算；结构重命名为 FastLevelUp
