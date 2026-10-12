@@ -82,26 +82,42 @@ namespace FastLevelUp
             }
         }
 
-        [Option("等级上限", "复制人技能可升到的最高等级（默认 50，与旧版一致）", "等级")]
+        // 下面 Option 特性里的三个字符串都是「翻译键」，不是显示文本。
+        // 英文默认值在 STRINGS.cs，中文在 translations/zh.po。
+        // 键的拼法固定为「命名空间.类名.字段名」，见 STRINGS.cs 的注释。
+
+        [Option("FastLevelUp.STRINGS.OPTIONS.MAX_LEVEL.NAME",
+            "FastLevelUp.STRINGS.OPTIONS.MAX_LEVEL.TOOLTIP",
+            "FastLevelUp.STRINGS.OPTIONS.CATEGORY_LEVEL.NAME")]
         [Limit(MIN_LEVEL, MAX_LEVEL)]
         public int MaxLevel { get; set; } = 50;
 
-        [Option("预算随上限缩放", "关闭（默认）：升到上限需要的练习总量与上限无关，即旧版行为。开启：上限相对 50 级翻 N 倍，总练习量也翻 N 倍，更高的上限意味着更强的投入。", "等级")]
+        [Option("FastLevelUp.STRINGS.OPTIONS.SCALE_BUDGET_WITH_CAP.NAME",
+            "FastLevelUp.STRINGS.OPTIONS.SCALE_BUDGET_WITH_CAP.TOOLTIP",
+            "FastLevelUp.STRINGS.OPTIONS.CATEGORY_LEVEL.NAME")]
         public bool ScaleBudgetWithCap { get; set; } = false;
 
-        [Option("满级练习周期", "从 0 级升到上限所需的「练习周期」数，越小越快。注意这不是日历周期：经验只在复制人干活时累积，且乘工作类型倍率（1~4）与训练速度修正，实际日历时间约为它的 1.5~2 倍。（默认 150，与旧版一致）", "升级速度")]
+        [Option("FastLevelUp.STRINGS.OPTIONS.TARGET_CYCLE.NAME",
+            "FastLevelUp.STRINGS.OPTIONS.TARGET_CYCLE.TOOLTIP",
+            "FastLevelUp.STRINGS.OPTIONS.CATEGORY_SPEED.NAME")]
         [Limit(MIN_CYCLE, MAX_CYCLE)]
         public int TargetCycle { get; set; } = 150;
 
-        [Option("升级速度倍率", "整体调整升级快慢：2 = 所需经验减半，0.5 = 所需经验翻倍（默认 1，与旧版一致）", "升级速度")]
+        [Option("FastLevelUp.STRINGS.OPTIONS.SPEED_MULTIPLIER.NAME",
+            "FastLevelUp.STRINGS.OPTIONS.SPEED_MULTIPLIER.TOOLTIP",
+            "FastLevelUp.STRINGS.OPTIONS.CATEGORY_SPEED.NAME")]
         [Limit(MIN_SPEED, MAX_SPEED)]
         public float SpeedMultiplier { get; set; } = 1f;
 
-        [Option("经验曲线陡峭度", "= 1 时每级所需练习时间相同（线性推进）；> 1 越往后越贵（原版手感）；< 1 前重后轻、后期越升越快。（默认 1.8，与旧版一致）", "升级速度")]
+        [Option("FastLevelUp.STRINGS.OPTIONS.EXP_CURVE_POWER.NAME",
+            "FastLevelUp.STRINGS.OPTIONS.EXP_CURVE_POWER.TOOLTIP",
+            "FastLevelUp.STRINGS.OPTIONS.CATEGORY_SPEED.NAME")]
         [Limit(MIN_POWER, MAX_POWER)]
         public float ExpCurvePower { get; set; } = 1.8f;
 
-        [Option("溢出经验结转", "升级时把超出部分的经验留到下一级，而不是清零。原版会丢弃溢出经验并限制每次只升一级，导致高速倍率调到很高后不再变快。默认开启。", "升级速度")]
+        [Option("FastLevelUp.STRINGS.OPTIONS.CARRY_OVER_SURPLUS.NAME",
+            "FastLevelUp.STRINGS.OPTIONS.CARRY_OVER_SURPLUS.TOOLTIP",
+            "FastLevelUp.STRINGS.OPTIONS.CATEGORY_SPEED.NAME")]
         public bool CarryOverSurplus { get; set; } = true;
 
         /// <summary>把越界值夹回安全范围，避免手改 config.json 导致异常。</summary>

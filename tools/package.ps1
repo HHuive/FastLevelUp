@@ -1,6 +1,6 @@
 # 编译并打包成可发布的 zip（解压后直接放进 mods\local\FastLevelUp 即可用）
 param(
-    [string]$Version = "1.1.0",
+    [string]$Version = "1.1.1",
     [string]$Configuration = "Debug"
 )
 
@@ -26,7 +26,8 @@ Compress-Archive -Path (
     "$bin\FastLevelUp.dll",
     "$bin\PLib.dll",
     "$bin\mod.yaml",
-    "$bin\mod_info.yaml"
+    "$bin\mod_info.yaml",
+    "$bin\translations"
 ) -DestinationPath $zip -CompressionLevel Optimal
 
 Write-Host "[FastLevelUp] 打包完成: $zip"

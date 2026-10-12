@@ -1,0 +1,9 @@
+bin/
+obj/
+dist/
+*.user
+.vs/
+
+# 语言包固定用 LF：游戏自带的 PO 解析是按行切分的，
+# 虽然它容错会去掉行尾 \r，但统一换行可避免不同机器上 diff 噪音。
+translations/*.po text eol=lf

@@ -59,6 +59,10 @@
     <None Update="mod_info.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <!-- translations/*.po 要跟 DLL 一起进 bin，才能被部署到 mod 目录 -->
+    <None Update="translations\**\*.po">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <!-- 编译后自动部署到游戏本地模组目录 -->
@@ -74,6 +78,13 @@
     </ItemGroup>
     <!-- 游戏开着时 DLL 会被占用，容错继续而不中断构建 -->
     <Copy SourceFiles="@(ModDeployFiles)" DestinationFolder="$(ModDeployDir)"
+          OverwriteReadOnlyFiles="true" ContinueOnError="WarnAndContinue" />
+    <!-- 语言包：递归复制 translations 目录，保持子目录结构 -->
+    <ItemGroup>
+      <ModDeployTranslations Include="$(OutDir)translations\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ModDeployTranslations)"
+          DestinationFiles="@(ModDeployTranslations-&gt;'$(ModDeployDir)\translations\%(RecursiveDir)%(Filename)%(Extension)')"
           OverwriteReadOnlyFiles="true" ContinueOnError="WarnAndContinue" />
     <Message Importance="high" Text="[FastLevelUp] 已部署 -&gt; $(ModDeployDir)" />
   </Target>
