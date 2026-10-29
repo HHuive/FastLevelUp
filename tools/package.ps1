@@ -1,6 +1,6 @@
 # 编译并打包成可发布的 zip（解压后直接放进 mods\local\FastLevelUp 即可用）
 param(
-    [string]$Version = "1.1.1",
+    [string]$Version = "1.1.2",
     [string]$Configuration = "Debug"
 )
 

@@ -3,3 +3,6 @@ obj/
 dist/
 *.user
 .vs/
+
+# 创意工坊上传用的干净目录（由 bin/Debug 组装，不纳入版本控制）
+_upload/

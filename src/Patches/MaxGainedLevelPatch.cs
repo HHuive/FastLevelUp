@@ -6,8 +6,9 @@ using UnityEngine;
 namespace FastLevelUp.Patches
 {
     /// <summary>
-    /// 抬高 AttributeLevel 的等级上限。
-    /// 兼容旧存档：v1 存档里 maxGainedLevel 已为 50，这里只在需要时抬高，不做下调。
+    /// 让 AttributeLevel 的等级上限跟随选项。
+    /// 原版 maxGainedLevel 不落盘，每次读档都会回到默认 20，所以这里每次
+    /// AddExperience 前都按当前选项校正一次。
     /// </summary>
     [HarmonyPatch(typeof(AttributeLevel), "AddExperience")]
     public static class MaxGainedLevelPatch
@@ -40,7 +41,13 @@ namespace FastLevelUp.Patches
                     GetOwnerName(__instance), GetAttributeName(__instance), level, cap, level));
             }
 
-            if (__instance.maxGainedLevel < cap)
+            // 上限双向同步：
+            //   调高 → 允许继续升级；
+            //   调低 → AddExperience 会在加经验之前直接 return false。
+            // 只改上限，不动 level / 属性加成，所以不会掉级。
+            // 如果只升不降，调低上限后 AddExperience 仍会偷偷累积经验，
+            // 之后再调高上限时可能借溢出结转一次性释放出来。
+            if (__instance.maxGainedLevel != cap)
                 __instance.maxGainedLevel = cap;
         }
 

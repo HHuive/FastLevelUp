@@ -14,7 +14,7 @@ namespace FastLevelUp
     /// <summary>mod 入口：注册选项面板、加载语言包、挂 Patch。</summary>
     public sealed class FastLevelUpMod : UserMod2
     {
-        public const string VERSION = "1.1.1";
+        public const string VERSION = "1.1.2";
 
         /// <summary>
         /// 本 mod 所有文案键的前缀，「命名空间.类名」，与 Option 特性里写的一致。
@@ -23,9 +23,12 @@ namespace FastLevelUp
 
         public override void OnLoad(Harmony harmony)
         {
-            base.OnLoad(harmony); // 必须调用，保持游戏本地化流程正常
             try
             {
+                // ★ base.OnLoad 内部就是 harmony.PatchAll(assembly)（U59-744825 反编译确认）。
+                //   这里不要再手动 PatchAll，否则每个补丁会被挂两遍。
+                base.OnLoad(harmony);
+
                 PUtil.InitLibrary(); // 初始化 PLib 核心（其它带选项面板的 mod 都这么做）
 
                 // 顺序很重要：先把自己的 STRINGS 注册进全局表并灌入翻译，
@@ -33,7 +36,6 @@ namespace FastLevelUp
                 SetupLocalization();
 
                 new POptions().RegisterOptions(this, typeof(LevelUpOptions));
-                harmony.PatchAll(typeof(FastLevelUpMod).Assembly);
                 Debug.Log("[FastLevelUp] v" + VERSION + " 已加载，选项文件: " +
                     POptions.GetConfigFilePath(typeof(LevelUpOptions)));
             }

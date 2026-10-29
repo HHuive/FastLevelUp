@@ -52,7 +52,7 @@ FastLevelUp/
 │   ├── zh.po               #   中文
 │   └── en.po               #   英文
 └── src/
-    ├── FastLevelUpMod.cs                     # 入口：注册 PLib 选项 + 加载语言包 + PatchAll
+    ├── FastLevelUpMod.cs                     # 入口：注册 PLib 选项 + 加载语言包（补丁由 base.OnLoad 统一挂载）
     ├── STRINGS.cs                            # 文案默认值（英文）与翻译键
     ├── LevelUpOptions.cs                     # 可调选项 + 配置读取 + 需求表预计算
     └── Patches/
@@ -117,10 +117,10 @@ Klei 原版公式形状完全一致，只是常量不同（原版：上限 20 / 
 ## 发布打包
 
 ```powershell
-.\tools\package.ps1 -Version 1.1.0
+.\tools\package.ps1 -Version 1.1.2
 ```
 
-产出 `dist\FastLevelUp-v1.1.0.zip`，内含 `FastLevelUp.dll`、`PLib.dll`、`mod.yaml`、`mod_info.yaml` 与
+产出 `dist\FastLevelUp-v1.1.2.zip`，内含 `FastLevelUp.dll`、`PLib.dll`、`mod.yaml`、`mod_info.yaml` 与
 `translations\`（`zh.po` / `en.po`），解压到 `mods\local\FastLevelUp\` 即可使用。
 
 CI 无法自动构建：本项目编译时必须引用游戏本体的 `Assembly-CSharp.dll` 等程序集，
@@ -128,6 +128,7 @@ CI 无法自动构建：本项目编译时必须引用游戏本体的 `Assembly-
 
 ## 变更记录
 
+- **v1.1.2**：修复 `base.OnLoad` 与手动 `PatchAll` 重复挂载补丁；等级上限改为双向同步，调低后不会继续偷偷累积经验
 - **v1.1.1**：选项说明文案重写得更精简准确；新增 `translations/` 多语言支持（中文 / 英文），面板文案跟随游戏语言
 - **v1.1.0**：加入可调选项面板（原版依赖 PLib）；经验预算模式、曲线陡峭度放宽到 0.6–2.5、溢出经验结转、需求表预计算；结构重命名为 FastLevelUp
 - **v1.0.0**：硬编码 50 级上限 + 150 周期曲线（旧存档不受影响：默认值与其完全一致）
